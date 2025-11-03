@@ -1,0 +1,146 @@
+/* React-PDF CSS imports */
+@import 'react-pdf/dist/Page/AnnotationLayer.css';
+@import 'react-pdf/dist/Page/TextLayer.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark blue theme inspired by the reference image */
+    --background: 210 50% 8%;
+    --foreground: 210 20% 98%;
+    --card: 210 40% 12%;
+    --card-foreground: 210 20% 98%;
+    --popover: 210 40% 12%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 210 40% 16%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 210 40% 16%;
+    --muted-foreground: 210 15% 65%;
+    --accent: 210 40% 16%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 210 30% 20%;
+    --input: 210 30% 20%;
+    --ring: 217 91% 60%;
+  }
+}
+
+/* PDF.js text layer styling for better selection */
+.react-pdf__Page__textContent {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  overflow: hidden !important;
+  opacity: 0.2 !important;
+  line-height: 1 !important;
+}
+
+.react-pdf__Page__textContent span {
+  color: transparent !important;
+  position: absolute !important;
+  white-space: pre !important;
+  cursor: text !important;
+  transform-origin: 0% 0% !important;
+}
+
+.react-pdf__Page__textContent ::selection {
+  background: rgba(59, 130, 246, 0.3) !important;
+}
+
+.react-pdf__Page__canvas {
+  display: block !important;
+  user-select: none !important;
+}
+
+/* PDF document container */
+.pdf-document {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+}
+
+/* Smooth animations */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-in {
+  animation: slideInFromRight 0.2s ease-out;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Custom animations */
+@keyframes gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient {
+  animation: gradient 6s ease infinite;
+}
+
+/* Smooth gradient transition for theme switching */
+.gradient-text {
+  transition: background-image 0.5s ease-in-out, -webkit-background-clip 0.5s ease-in-out;
+  background-size: 200% 200%;
+}
+
+/* Grid pattern */
+.bg-grid-slate-100 {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f1f5f9' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v6h6V4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.dark .bg-grid-slate-700\/25 {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23334155' fill-opacity='0.25'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v6h6V4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
