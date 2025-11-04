@@ -169,8 +169,8 @@ export default function ReferralLinkGenerator({
                 <Label>Link Type</Label>
                 <Select
                   value={linkType}
-                  onValueChange={(value: "discount" | "free") =>
-                    setLinkType(value)
+                  onValueChange={(value) =>
+                    setLinkType(value as "discount" | "free")
                   }
                 >
                   <SelectTrigger>

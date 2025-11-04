@@ -11,7 +11,7 @@ export const runtime = "nodejs";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { planId: string } }
+  { params }: { params: Promise<{ planId: string }> }
 ) {
   try {
     const { userId: clerkUserId } = await auth();
@@ -20,7 +20,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const planId = params.planId;
+    const { planId } = await params;
 
     // Get user from Supabase
     const { data: user, error: userError } = await supabaseAdmin

@@ -27,7 +27,7 @@ export default function InstitutionSettingsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
-      <InstitutionHeader institutionName="Institution" />
+      <InstitutionHeader userName="Institution" />
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-8">

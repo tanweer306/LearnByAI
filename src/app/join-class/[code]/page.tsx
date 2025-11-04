@@ -9,10 +9,11 @@ import { Loader2, CheckCircle, XCircle, Users } from "lucide-react";
 export default function JoinClassPage({
   params,
 }: {
-  params: { code: string };
+  params: Promise<{ code: string }>;
 }) {
   const router = useRouter();
   const { isSignedIn, isLoaded } = useAuth();
+  const [code, setCode] = useState<string | null>(null);
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading"
   );
@@ -20,20 +21,27 @@ export default function JoinClassPage({
   const [className, setClassName] = useState("");
 
   useEffect(() => {
+    params.then((p) => setCode(p.code));
+  }, [params]);
+
+  useEffect(() => {
+    if (!code) return;
+
     if (isLoaded && !isSignedIn) {
       // Redirect to sign in with return URL
-      router.push(`/sign-in?redirect_url=/join-class/${params.code}`);
+      router.push(`/sign-in?redirect_url=/join-class/${code}`);
       return;
     }
 
     if (isLoaded && isSignedIn) {
       joinClass();
     }
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, code]);
 
   const joinClass = async () => {
+    if (!code) return;
     try {
-      const response = await fetch(`/api/classes/join/${params.code}`, {
+      const response = await fetch(`/api/classes/join/${code}`, {
         method: "POST",
       });
 

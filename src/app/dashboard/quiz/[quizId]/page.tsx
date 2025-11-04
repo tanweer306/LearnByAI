@@ -45,9 +45,10 @@ interface Quiz {
   chapter: { id: string; title: string; chapter_number: number } | null;
 }
 
-export default function QuizTakingPage({ params }: { params: { quizId: string } }) {
+export default function QuizTakingPage({ params }: { params: Promise<{ quizId: string }> }) {
   const { user } = useUser();
   const router = useRouter();
+  const [quizId, setQuizId] = useState<string | null>(null);
 
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -62,29 +63,31 @@ export default function QuizTakingPage({ params }: { params: { quizId: string } 
   const [markedForReview, setMarkedForReview] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    fetchQuiz();
-    // Load saved answers from localStorage
-    const savedAnswers = localStorage.getItem(`quiz_${params.quizId}_answers`);
-    if (savedAnswers) {
-      try {
-        setAnswers(JSON.parse(savedAnswers));
-      } catch (e) {
-        console.error('Failed to load saved answers:', e);
+    params.then(p => {
+      setQuizId(p.quizId);
+      // Load saved answers from localStorage
+      const savedAnswers = localStorage.getItem(`quiz_${p.quizId}_answers`);
+      if (savedAnswers) {
+        try {
+          setAnswers(JSON.parse(savedAnswers));
+        } catch (e) {
+          console.error('Failed to load saved answers:', e);
+        }
       }
-    }
-  }, []);
+    });
+  }, [params]);
 
   // Auto-save answers every 30 seconds
   useEffect(() => {
-    if (started && Object.keys(answers).length > 0) {
+    if (started && Object.keys(answers).length > 0 && quizId) {
       const saveInterval = setInterval(() => {
-        localStorage.setItem(`quiz_${params.quizId}_answers`, JSON.stringify(answers));
+        localStorage.setItem(`quiz_${quizId}_answers`, JSON.stringify(answers));
         console.log('Auto-saved answers');
       }, 30000); // 30 seconds
 
       return () => clearInterval(saveInterval);
     }
-  }, [started, answers, params.quizId]);
+  }, [started, answers, quizId]);
 
   useEffect(() => {
     if (started && timeRemaining !== null && timeRemaining > 0) {
@@ -102,10 +105,17 @@ export default function QuizTakingPage({ params }: { params: { quizId: string } 
     }
   }, [started, timeRemaining]);
 
+  useEffect(() => {
+    if (quizId) {
+      fetchQuiz();
+    }
+  }, [quizId]);
+
   const fetchQuiz = async () => {
+    if (!quizId) return;
     try {
       setLoading(true);
-      const response = await fetch(`/api/quiz/${params.quizId}`);
+      const response = await fetch(`/api/quiz/${quizId}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -135,8 +145,10 @@ export default function QuizTakingPage({ params }: { params: { quizId: string } 
   const handleAnswerChange = (questionId: string, answer: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: answer }));
     // Immediate save on answer change
-    const updatedAnswers = { ...answers, [questionId]: answer };
-    localStorage.setItem(`quiz_${params.quizId}_answers`, JSON.stringify(updatedAnswers));
+    if (quizId) {
+      const updatedAnswers = { ...answers, [questionId]: answer };
+      localStorage.setItem(`quiz_${quizId}_answers`, JSON.stringify(updatedAnswers));
+    }
   };
 
   const toggleMarkForReview = (questionId: string) => {
@@ -181,9 +193,10 @@ export default function QuizTakingPage({ params }: { params: { quizId: string } 
     setError(null);
 
     try {
+      if (!quizId) return;
       const timeTaken = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
 
-      const response = await fetch(`/api/quiz/${params.quizId}/submit`, {
+      const response = await fetch(`/api/quiz/${quizId}/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answers, timeTaken }),
@@ -196,10 +209,10 @@ export default function QuizTakingPage({ params }: { params: { quizId: string } 
       }
 
       // Clear saved answers from localStorage
-      localStorage.removeItem(`quiz_${params.quizId}_answers`);
+      localStorage.removeItem(`quiz_${quizId}_answers`);
       
       // Redirect to results page
-      router.push(`/dashboard/quiz/${params.quizId}/results/${data.attemptId}`);
+      router.push(`/dashboard/quiz/${quizId}/results/${data.attemptId}`);
     } catch (err: any) {
       console.error("Error submitting quiz:", err);
       setError(err.message || "Failed to submit quiz");

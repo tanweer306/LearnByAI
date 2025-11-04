@@ -46,7 +46,7 @@ export default function AddTeacherPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
-      <InstitutionHeader institutionName="Institution" />
+      <InstitutionHeader userName="Institution" />
 
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         <Button variant="ghost" onClick={() => router.back()} className="mb-4">

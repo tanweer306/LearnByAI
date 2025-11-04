@@ -51,8 +51,9 @@ interface StudyPlan {
   createdAt: string;
 }
 
-export default function StudyPlanPage({ params }: { params: { planId: string } }) {
+export default function StudyPlanPage({ params }: { params: Promise<{ planId: string }> }) {
   const { user } = useUser();
+  const [planId, setPlanId] = useState<string | null>(null);
   const [plan, setPlan] = useState<StudyPlan | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,13 +61,20 @@ export default function StudyPlanPage({ params }: { params: { planId: string } }
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
 
   useEffect(() => {
-    fetchPlan();
-  }, []);
+    params.then(p => setPlanId(p.planId));
+  }, [params]);
+
+  useEffect(() => {
+    if (planId) {
+      fetchPlan();
+    }
+  }, [planId]);
 
   const fetchPlan = async () => {
+    if (!planId) return;
     try {
       setLoading(true);
-      const response = await fetch(`/api/study-plan/${params.planId}`);
+      const response = await fetch(`/api/study-plan/${planId}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -83,9 +91,10 @@ export default function StudyPlanPage({ params }: { params: { planId: string } }
   };
   
   const handleCompleteTask = async (taskId: string) => {
+    if (!planId) return;
     try {
       setCompletingTask(taskId);
-      const response = await fetch(`/api/study-plan/${params.planId}/toggle-task`, {
+      const response = await fetch(`/api/study-plan/${planId}/toggle-task`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ taskId }),

@@ -15,7 +15,7 @@ interface ToggleTaskRequest {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { planId: string } }
+  { params }: { params: Promise<{ planId: string }> }
 ) {
   try {
     const { userId: clerkUserId } = await auth();
@@ -24,7 +24,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const planId = params.planId;
+    const { planId } = await params;
     const body: ToggleTaskRequest = await request.json();
     const { taskId } = body;
 

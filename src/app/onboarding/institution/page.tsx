@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ThemeAwareLogo } from "@/components/layout/ThemeAwareLogo";
 import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 
 const institutionTypes = [

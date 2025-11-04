@@ -35,7 +35,7 @@ export default async function InstitutionClassesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
-      <InstitutionHeader institutionName={userData.institution_name || "Institution"} />
+      <InstitutionHeader userName={userData.institution_name || "Institution"} />
 
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">

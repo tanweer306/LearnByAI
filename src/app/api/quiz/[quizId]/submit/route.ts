@@ -82,7 +82,7 @@ Return JSON format:
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { quizId: string } }
+  { params }: { params: Promise<{ quizId: string }> }
 ) {
   try {
     const { userId: clerkUserId } = await auth();
@@ -91,7 +91,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const quizId = params.quizId;
+    const { quizId } = await params;
     const body: SubmitQuizRequest = await request.json();
     const { answers, timeTaken } = body;
 

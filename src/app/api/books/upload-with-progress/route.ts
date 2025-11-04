@@ -411,7 +411,7 @@ export async function POST(request: NextRequest) {
     // STEP 4: Process document and extract text
     // ============================================================================
     console.log("📝 Step 4: Processing document...");
-    const { pages, totalPages, metadata } = await processDocument(buffer, file.name, file.type);
+    const { pages, totalPages, metadata } = await processDocument(buffer, file.name);
 
     if (!pages || pages.length === 0) {
       throw new Error("Failed to extract text from document");
@@ -436,9 +436,6 @@ export async function POST(request: NextRequest) {
       metadata: {
         subject,
         grade_level: gradeLevel,
-        description,
-        access_type: accessType,
-        is_public: isPublic,
       },
       embeddings_generated: false,
       pinecone_ids: [],

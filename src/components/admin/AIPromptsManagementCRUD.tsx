@@ -226,9 +226,13 @@ export default function AIPromptsManagementCRUD() {
                 </div>
                 <div className="flex items-center gap-1">
                   {prompt.is_active ? (
-                    <CheckCircle className="w-5 h-5 text-green-600" title="Active" />
+                    <span title="Active">
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    </span>
                   ) : (
-                    <XCircle className="w-5 h-5 text-gray-400" title="Inactive" />
+                    <span title="Inactive">
+                      <XCircle className="w-5 h-5 text-gray-400" />
+                    </span>
                   )}
                 </div>
               </div>

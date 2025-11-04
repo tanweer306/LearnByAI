@@ -11,7 +11,7 @@ export const runtime = "nodejs";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { bookId: string } }
+  { params }: { params: Promise<{ bookId: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -20,7 +20,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const bookId = params.bookId;
+    const { bookId } = await params;
     const { searchParams } = new URL(request.url);
     const pageNumber = searchParams.get("page");
 

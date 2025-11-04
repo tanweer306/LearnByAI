@@ -10,7 +10,7 @@ export const runtime = "nodejs";
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -30,7 +30,8 @@ export async function PATCH(
       return NextResponse.json({ error: "Forbidden - Admin only" }, { status: 403 });
     }
 
-    const bookId = params.id;
+    const { id } = await params;
+    const bookId = id;
     const updates = await request.json();
 
     // Update book
@@ -65,7 +66,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -85,7 +86,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Forbidden - Admin only" }, { status: 403 });
     }
 
-    const bookId = params.id;
+    const { id } = await params;
+    const bookId = id;
 
     // Delete book
     const { error } = await supabaseAdmin

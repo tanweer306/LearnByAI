@@ -74,7 +74,7 @@ export async function GET() {
         endpoint: endpoint.endpoint,
         hits: endpoint.hits,
         misses: endpoint.misses,
-        totalRequests: endpoint.totalRequests,
+        totalRequests: endpoint.hits + endpoint.misses,
         hitRate: formatHitRate(endpoint.hitRate),
         hitRateRaw: endpoint.hitRate,
       })),

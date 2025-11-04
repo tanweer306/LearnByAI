@@ -107,11 +107,21 @@ export async function canUploadBook(userId: string): Promise<{
  */
 export async function incrementBookCount(userId: string): Promise<boolean> {
   try {
+    const { data: user, error: getErr } = await supabaseAdmin
+      .from('users')
+      .select('total_books_uploaded')
+      .eq('id', userId)
+      .single();
+
+    if (getErr) {
+      console.error('Error fetching current book count:', getErr);
+      return false;
+    }
+
+    const current = user?.total_books_uploaded ?? 0;
     const { error } = await supabaseAdmin
       .from('users')
-      .update({
-        total_books_uploaded: supabaseAdmin.raw('total_books_uploaded + 1'),
-      })
+      .update({ total_books_uploaded: current + 1 })
       .eq('id', userId);
 
     if (error) {
@@ -175,11 +185,21 @@ export async function canGenerateQuiz(userId: string): Promise<{
  */
 export async function incrementQuizCount(userId: string): Promise<boolean> {
   try {
+    const { data: user, error: getErr } = await supabaseAdmin
+      .from('users')
+      .select('quizzes_generated_this_month')
+      .eq('id', userId)
+      .single();
+
+    if (getErr) {
+      console.error('Error fetching current quiz count:', getErr);
+      return false;
+    }
+
+    const current = user?.quizzes_generated_this_month ?? 0;
     const { error } = await supabaseAdmin
       .from('users')
-      .update({
-        quizzes_generated_this_month: supabaseAdmin.raw('quizzes_generated_this_month + 1'),
-      })
+      .update({ quizzes_generated_this_month: current + 1 })
       .eq('id', userId);
 
     if (error) {
@@ -243,11 +263,21 @@ export async function canMakeAIQuery(userId: string): Promise<{
  */
 export async function incrementAIQueryCount(userId: string): Promise<boolean> {
   try {
+    const { data: user, error: getErr } = await supabaseAdmin
+      .from('users')
+      .select('ai_queries_this_month')
+      .eq('id', userId)
+      .single();
+
+    if (getErr) {
+      console.error('Error fetching current AI queries count:', getErr);
+      return false;
+    }
+
+    const current = user?.ai_queries_this_month ?? 0;
     const { error } = await supabaseAdmin
       .from('users')
-      .update({
-        ai_queries_this_month: supabaseAdmin.raw('ai_queries_this_month + 1'),
-      })
+      .update({ ai_queries_this_month: current + 1 })
       .eq('id', userId);
 
     if (error) {
@@ -367,11 +397,22 @@ export async function canAddStudentToInstitute(instituteId: string): Promise<{
  */
 export async function consumeInstituteSeat(instituteId: string): Promise<boolean> {
   try {
+    const { data, error: getErr } = await supabaseAdmin
+      .from('subscriptions')
+      .select('used_seats')
+      .eq('user_id', instituteId)
+      .eq('status', 'active')
+      .single();
+
+    if (getErr) {
+      console.error('Error fetching current used seats:', getErr);
+      return false;
+    }
+
+    const current = data?.used_seats ?? 0;
     const { error } = await supabaseAdmin
       .from('subscriptions')
-      .update({
-        used_seats: supabaseAdmin.raw('used_seats + 1'),
-      })
+      .update({ used_seats: current + 1 })
       .eq('user_id', instituteId)
       .eq('status', 'active');
 
@@ -392,11 +433,23 @@ export async function consumeInstituteSeat(instituteId: string): Promise<boolean
  */
 export async function releaseInstituteSeat(instituteId: string): Promise<boolean> {
   try {
+    const { data, error: getErr } = await supabaseAdmin
+      .from('subscriptions')
+      .select('used_seats')
+      .eq('user_id', instituteId)
+      .eq('status', 'active')
+      .single();
+
+    if (getErr) {
+      console.error('Error fetching current used seats:', getErr);
+      return false;
+    }
+
+    const current = data?.used_seats ?? 0;
+    const next = Math.max(current - 1, 0);
     const { error } = await supabaseAdmin
       .from('subscriptions')
-      .update({
-        used_seats: supabaseAdmin.raw('GREATEST(used_seats - 1, 0)'),
-      })
+      .update({ used_seats: next })
       .eq('user_id', instituteId)
       .eq('status', 'active');
 

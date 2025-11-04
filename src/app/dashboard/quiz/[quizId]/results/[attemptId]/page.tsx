@@ -60,10 +60,12 @@ interface Quiz {
 export default function QuizResultsPage({
   params,
 }: {
-  params: { quizId: string; attemptId: string };
+  params: Promise<{ quizId: string; attemptId: string }>;
 }) {
   const { user } = useUser();
   const router = useRouter();
+  const [quizId, setQuizId] = useState<string | null>(null);
+  const [attemptId, setAttemptId] = useState<string | null>(null);
 
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [results, setResults] = useState<Results | null>(null);
@@ -73,15 +75,25 @@ export default function QuizResultsPage({
   const [showExplanations, setShowExplanations] = useState(true);
 
   useEffect(() => {
-    fetchResults();
-  }, []);
+    params.then(p => {
+      setQuizId(p.quizId);
+      setAttemptId(p.attemptId);
+    });
+  }, [params]);
+
+  useEffect(() => {
+    if (quizId && attemptId) {
+      fetchResults();
+    }
+  }, [quizId, attemptId]);
 
   const fetchResults = async () => {
+    if (!quizId || !attemptId) return;
     try {
       setLoading(true);
 
       // Fetch quiz details
-      const quizResponse = await fetch(`/api/quiz/${params.quizId}`);
+      const quizResponse = await fetch(`/api/quiz/${quizId}`);
       const quizData = await quizResponse.json();
 
       if (!quizResponse.ok) {
@@ -92,7 +104,7 @@ export default function QuizResultsPage({
 
       // Fetch attempt results
       const resultsResponse = await fetch(
-        `/api/quiz/${params.quizId}/attempts/${params.attemptId}`
+        `/api/quiz/${quizId}/attempts/${attemptId}`
       );
       const resultsData = await resultsResponse.json();
 
@@ -252,7 +264,7 @@ export default function QuizResultsPage({
         {/* Actions */}
         <div className="flex gap-4 mb-8">
           <Button
-            onClick={() => router.push(`/dashboard/quiz/${params.quizId}`)}
+            onClick={() => quizId && router.push(`/dashboard/quiz/${quizId}`)}
             className="bg-gradient-to-r from-purple-700 to-purple-900 dark:from-[#99CE79] dark:to-[#E2FED3] dark:text-gray-900"
           >
             <RotateCcw className="h-4 w-4 mr-2" />

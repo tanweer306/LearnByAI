@@ -24,9 +24,6 @@ export async function GET() {
     // Test DEL operation
     await cacheHelpers.del(testKey);
 
-    // Get Redis info
-    const info = await redis.info();
-
     return NextResponse.json({
       success: true,
       message: "Redis is connected and working properly",
@@ -36,7 +33,7 @@ export async function GET() {
         delete: true,
       },
       retrievedValue,
-      serverInfo: info ? "Available" : "Not available",
+      connection: "Upstash Redis - Connected",
     });
   } catch (error: any) {
     console.error("Redis test error:", error);

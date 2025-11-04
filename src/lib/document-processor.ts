@@ -1,6 +1,6 @@
 import mammoth from "mammoth";
-import EPub from "epub2";
-import { promisify } from "util";
+// import EPub from "epub2"; // Disabled due to build issues with epub2 package
+// import { promisify } from "util";
 import { processPDF, ProcessedPage } from "./pdf-processor";
 
 export interface DocumentProcessingResult {
@@ -38,7 +38,9 @@ export async function processDocument(
     case "txt":
       return await processTxt(buffer);
     case "epub":
-      return await processEpub(buffer);
+      // EPUB support temporarily disabled due to epub2 package issues
+      throw new Error("EPUB format is currently not supported. Please convert to PDF or DOCX.");
+      // return await processEpub(buffer);
     default:
       throw new Error(`Unsupported file format: ${extension}`);
   }
@@ -147,7 +149,10 @@ async function processTxt(buffer: Buffer): Promise<DocumentProcessingResult> {
 
 /**
  * Process .epub files
+ * NOTE: EPUB support is currently disabled due to epub2 package build issues.
+ * To re-enable, uncomment the imports at the top and this function.
  */
+/*
 async function processEpub(buffer: Buffer): Promise<DocumentProcessingResult> {
   return new Promise((resolve, reject) => {
     try {
@@ -229,6 +234,7 @@ async function processEpub(buffer: Buffer): Promise<DocumentProcessingResult> {
     }
   });
 }
+*/
 
 /**
  * Format plain text to HTML with paragraphs

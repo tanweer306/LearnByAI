@@ -183,10 +183,15 @@ export async function POST(request: NextRequest) {
   let botResponse = "";
   let quickActions: QuickAction[] = [];
 
-  try {
+   try {
+    const chatMessages = messages.map((m) => ({
+      role: m.role as "system" | "user" | "assistant",
+      content: m.content,
+    }));
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: messages as unknown as { role: string; content: string }[],
+      messages: chatMessages,
       temperature: 0.7,
       max_tokens: 500,
     });

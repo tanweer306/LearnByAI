@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Calendar, Clock, CheckCircle } from "lucide-react";
 import Link from "next/link";
@@ -10,9 +11,10 @@ import Link from "next/link";
 export default function StudentAssignmentPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const router = useRouter();
+  const [assignmentId, setAssignmentId] = useState<string | null>(null);
   const [assignment, setAssignment] = useState<any>(null);
   const [submission, setSubmission] = useState<any>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -20,12 +22,19 @@ export default function StudentAssignmentPage({
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    fetchAssignment();
-  }, []);
+    params.then((p) => setAssignmentId(p.id));
+  }, [params]);
+
+  useEffect(() => {
+    if (assignmentId) {
+      fetchAssignment();
+    }
+  }, [assignmentId]);
 
   const fetchAssignment = async () => {
+    if (!assignmentId) return;
     try {
-      const response = await fetch(`/api/assignments/${params.id}`);
+      const response = await fetch(`/api/assignments/${assignmentId}`);
       const data = await response.json();
 
       if (data.success) {
@@ -48,9 +57,10 @@ export default function StudentAssignmentPage({
   };
 
   const handleSubmit = async () => {
+    if (!assignmentId) return;
     setSubmitting(true);
     try {
-      const response = await fetch(`/api/assignments/${params.id}/submit`, {
+      const response = await fetch(`/api/assignments/${assignmentId}/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answers }),

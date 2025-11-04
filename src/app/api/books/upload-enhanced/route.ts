@@ -301,9 +301,6 @@ export async function POST(request: NextRequest) {
       metadata: {
         subject,
         grade_level: gradeLevel,
-        description,
-        access_type: accessType,
-        is_public: isPublic,
       },
       embeddings_generated: false,
       pinecone_ids: [],
