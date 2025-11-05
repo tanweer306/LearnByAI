@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   description:
   "Upload textbooks, get instant AI tutoring, create quizzes, and personalized study plans. Perfect for students, teachers, and schools.",
   icons: {
-    icon: "/images/favicon.ico",
-    shortcut: "/images/favicon.ico",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
   },
 };
 
